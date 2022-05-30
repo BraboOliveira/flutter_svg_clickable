@@ -13,6 +13,7 @@ class SvgParser {
   final List<PathSegment> _pathSegments = List<PathSegment>();
   List<Path> _paths = new List<Path>();
 
+
   //TODO do proper parsing and support hex-alpa and RGBA
   Color parseColor(String cStr) {
     if (cStr == null || cStr.isEmpty)
@@ -53,13 +54,18 @@ class SvgParser {
     this._pathSegments.clear();
     int index = 0; //number of parsed path elements
     var doc = xml.parse(svgString);
-    //TODO For now only <path> tags are considered for parsing (add circle, rect, arcs etc.)
+    //TODO Por enquanto, apenas as tags <path> são consideradas para análise (adicionar círculo, retângulo, arcos etc.)
     doc
         .findAllElements("path")
         .map((node) => node.attributes)
         .forEach((attributes) {
       var dPath = attributes.firstWhere((attr) => attr.name.local == "d",
           orElse: () => null);
+
+      var titlePath = attributes.firstWhere((attr) => attr.name.local == "title",
+          orElse: () => null);
+      print(dPath);
+
       if (dPath != null) {
         Path path = new Path();
         writeSvgPathDataToPath(dPath.value, new PathModifier(path));
@@ -67,9 +73,11 @@ class SvgParser {
         Color color;
         double strokeWidth;
 
+
         //Attributes - [1] css-styling
         var style = attributes.firstWhere((attr) => attr.name.local == "style",
             orElse: () => null);
+        print(style);
         if (style != null) {
           //Parse color of stroke
           RegExp exp = new RegExp(r"stroke:([^;]+);");
@@ -91,6 +99,8 @@ class SvgParser {
         var strokeElement = attributes.firstWhere(
             (attr) => attr.name.local == "stroke",
             orElse: () => null);
+
+        print("strokeElement"+strokeElement.toString());
         if (strokeElement != null) {
           color = parseColor(strokeElement.value);
         }
@@ -139,6 +149,13 @@ class SvgParser {
   List<Path> getPaths() {
     return this._paths;
   }
+  Future printPah(Path recebido) async {
+    // ignore: await_only_futures
+    await print(recebido);
+  }
+  // List<Path> getPaths() {
+  //   return this._paths;
+  // }
 }
 
 /// Represents a segment of path, as returned by path.computeMetrics() and the associated painting parameters for each Path

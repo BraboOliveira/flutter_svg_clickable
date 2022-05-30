@@ -28,28 +28,28 @@ class MyHomePage extends StatefulWidget {
 
 //! Make sure fill the current svg's viewBox(width and height)
 // TODO: fix svg parser to automatic get the viewBox
-const double SvgWidth = 1369; //1369; //612.54211;
-const double SvgHeight = 1141; //1141; //723.61865;
+const double SvgWidth = 35; //1369; //612.54211;
+const double SvgHeight = 35; //1141; //723.61865;
 
 class _MyHomePageState extends State<MyHomePage> {
   Path _selectPath;
-  final svgPath = "assets/map_china.svg";
+  final svgPath = 'assets/mao_desenho.svg';
   List<Path> paths = [];
 
   @override
   void initState() {
     parseSvgToPath();
-
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("svg clickable china map ")),
+      appBar: AppBar(title: Text("Selecionar Dedo ")),
       body: Center(
         child: Container(
-          color: Colors.grey,  // just make a difference
+          color: Colors.white,  // just make a difference
           width: double.infinity, // full screen here, you can change size to see different effect
           height: double.infinity,
           child: CanvasTouchDetector( // see: https://pub.dev/packages/touchable
@@ -112,12 +112,12 @@ class PathPainter extends CustomPainter {
     // your paint
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
-      ..color = Colors.red
+      ..color = Colors.blueGrey
       ..strokeWidth = 1.0;
 
     paths.forEach(
       (path) {
-        // Here: archive our target, select one province, just change the paint's style to fill
+        // <Muda a cor>
         paint.style = path == curPath ? PaintingStyle.fill : PaintingStyle.stroke;
 
         touchCanvas.drawPath(
@@ -125,8 +125,10 @@ class PathPainter extends CustomPainter {
           path.transform(matrix4.storage).shift(Offset(offsetX, offsetY)),
           paint,
           onTapDown: (details) {
-            // notify select change and redraw
-            onPressed(path); 
+            // notificar selecionar alterar e redesenhar
+            onPressed(path);
+            SvgParser parser = SvgParser();
+            parser.printPah(path);
           },
         );
       },
@@ -135,4 +137,5 @@ class PathPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(PathPainter oldDelegate) => true;
+  
 }
